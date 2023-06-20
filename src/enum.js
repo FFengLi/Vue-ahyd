@@ -9,7 +9,7 @@
 支持 {key , text} 结构：{ male: '男', female: '女', other: '其他' }
 也支持 {key :{text, value }}结构：{ male: { text: '男', value: 1 }, female: { text: '女', value: 2 } }
  */
-//枚举构造器，提供的属性：
+//枚举构造器，提供的属性，
 // keys：枚举的key集合[key]
 // texts：枚举的文本text集合[text]
 // values：枚举的数值value集合[value]
