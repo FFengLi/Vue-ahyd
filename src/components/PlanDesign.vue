@@ -1,50 +1,50 @@
 <template>
   <div>
-<!--    <el-table-->
-<!--        :data="routeCableList"-->
-<!--        border-->
-<!--        style="width: 100%">-->
-<!--      <el-table-column-->
+    <!--    <el-table-->
+    <!--        :data="routeCableList"-->
+    <!--        border-->
+    <!--        style="width: 100%">-->
+    <!--      <el-table-column-->
 
-<!--          prop="cable_seg_name"-->
-<!--          label="光缆段"-->
-<!--          width="250">-->
-<!--      </el-table-column>-->
-<!--      <el-table-column-->
-<!--          prop="station_a"-->
-<!--          label="A端站点"-->
-<!--          width="120">-->
-<!--      </el-table-column>-->
-<!--      <el-table-column-->
-<!--          prop="station_z"-->
-<!--          label="Z端站点"-->
-<!--          width="120">-->
-<!--      </el-table-column>-->
-<!--      <el-table-column-->
-<!--          prop="cable_name"-->
-<!--          label="光纤信息"-->
-<!--          width="200">-->
-<!--      </el-table-column>-->
-<!--      <el-table-column-->
-<!--          prop="is_main_backup"-->
-<!--          label="地址"-->
-<!--          width="300">-->
-<!--      </el-table-column>-->
+    <!--          prop="cable_seg_name"-->
+    <!--          label="光缆段"-->
+    <!--          width="250">-->
+    <!--      </el-table-column>-->
+    <!--      <el-table-column-->
+    <!--          prop="station_a"-->
+    <!--          label="A端站点"-->
+    <!--          width="120">-->
+    <!--      </el-table-column>-->
+    <!--      <el-table-column-->
+    <!--          prop="station_z"-->
+    <!--          label="Z端站点"-->
+    <!--          width="120">-->
+    <!--      </el-table-column>-->
+    <!--      <el-table-column-->
+    <!--          prop="cable_name"-->
+    <!--          label="光纤信息"-->
+    <!--          width="200">-->
+    <!--      </el-table-column>-->
+    <!--      <el-table-column-->
+    <!--          prop="is_main_backup"-->
+    <!--          label="地址"-->
+    <!--          width="300">-->
+    <!--      </el-table-column>-->
 
-<!--      <el-table-column-->
+    <!--      <el-table-column-->
 
-<!--          label="操作"-->
-<!--          width="100">-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>-->
-<!--          <el-button type="text" size="small">编辑</el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--    </el-table>-->
+    <!--          label="操作"-->
+    <!--          width="100">-->
+    <!--        <template slot-scope="scope">-->
+    <!--          <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>-->
+    <!--          <el-button type="text" size="small">编辑</el-button>-->
+    <!--        </template>-->
+    <!--      </el-table-column>-->
+    <!--    </el-table>-->
 
     <el-form :inline="true" :model="searchForm">
       <el-form-item label="规划设计名称">
-        <el-input v-model="searchForm.planDesignName" placeholder="规划设计名称"></el-input>
+        <el-input v-model="searchForm.planDesignName" placeholder="规划设计名称" clearable></el-input>
       </el-form-item>
       <el-form-item label="规划类型">
         <el-select v-model="searchForm.specId" placeholder="规划类型">
@@ -53,11 +53,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="设计人">
-        <el-input v-model="searchForm.designer" placeholder="设计人"></el-input>
+        <el-input v-model="searchForm.designer" placeholder="设计人" clearable></el-input>
       </el-form-item>
       <el-form-item label="设计时间">
         <el-date-picker
-            v-model="searchForm.designTime"
+            v-model="searchForm.createTime"
             type="datetimerange"
             range-separator="至"
             start-placeholder="开始日期"
@@ -92,7 +92,8 @@
       <el-table-column
           prop="spec_id"
           label="业务类型"
-          width="120">
+          width="120"
+          :formatter="formatterDesignType">
       </el-table-column>
       <el-table-column
           prop="project_director"
@@ -133,9 +134,10 @@
         @next-click="next"
         @prev-click="previous"
         @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
         :current-page="this.searchForm.current"
-        :page-sizes="[2]"
-        :page-size="1"
+        :page-sizes="[1,2,3,5,8]"
+        :page-size="5"
         layout="total, sizes, prev, pager, next, jumper"
         :total="this.total">
     </el-pagination>
@@ -179,15 +181,15 @@
               :on-remove="handleRemove"
               :before-remove="beforeRemove"
               :on-success="handleSuccess(index)">
-            <label for="el-button">{{label}}</label>
-            <el-button size="small" type="primary" id="el-button">点击上传</el-button>
+            <label>{{label}}</label>
+            <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="upload-description">{{ descriptions[index] }}</div>
           </el-upload>
         </template>
       </div>
 
       <div slot="footer" class="dialog-footer">
-<!--        <el-button @click="dialogFormVisible = false">取 消</el-button>-->
+        <!--        <el-button @click="dialogFormVisible = false">取 消</el-button>-->
         <el-button type="primary" @click="save">保 存</el-button>
         <el-button type="primary" @click="saveAndAnalyse">保 存 分 析</el-button>
       </div>
@@ -228,9 +230,9 @@ export default {
         planDesignName: "",
         specId: 1,
         designer: "",
-        designTime: [],
+        createTime: [],
         current: 1,
-        size: 2
+        size: 5
       },
       total: 0,
       planDesignType,
@@ -255,8 +257,17 @@ export default {
             // 总是会执行
           });
     },
+    formatterDesignType(rows,column){
+      console.log("业务类型：",rows.spec_id);
+      if(rows.spec_id==1){
+        return"OTW业务"
+      }else if(rows.spec_id==2){
+        return"网元业务"
+      }
+    },
     searchPlanDesignBill() {
       let _this=this;
+      console.log(this.searchForm.createTime)
       axios.post('http://localhost:8080/searchBill.do', this.searchForm)
           .then(res => {
             console.log("res是服务器返回的结果", res);
@@ -267,33 +278,24 @@ export default {
           });
     },
     previous(val){
-      console.log("向前翻页",`${val}`);
-      this.searchForm.current=`${val}`;
-      let _this=this;
-      axios.post('http://localhost:8080/searchBill.do', this.searchForm)
-          .then(res => {
-            console.log("res是服务器返回的结果", res);
-            _this.planDesignInfoList=res.data.data.records;
-            this.total=res.data.data.total;
-          }, err => {
-            console.log("服务器出错，err代表服务器返回的错误信息")
-          });
+      console.log("向前翻页",val);
+      this.searchForm.current=val;
+      this.searchPlanDesignBill();
     },
     next(val){
-      console.log("向下翻页",`${val}`)
-      this.searchForm.current=`${val}`;
-      let _this=this;
-      axios.post('http://localhost:8080/searchBill.do', this.searchForm)
-          .then(res => {
-            console.log("res是服务器返回的结果", res);
-            _this.planDesignInfoList=res.data.data.records;
-            this.total=res.data.data.total;
-          }, err => {
-            console.log("服务器出错，err代表服务器返回的错误信息")
-          });
+      console.log("向下翻页",val)
+      this.searchForm.current=val;
+      this.searchPlanDesignBill();
     },
     handleCurrentChange(val){
-      // console.log(`当前页: ${val}`);
+      console.log("当前页: ",val);
+      this.searchForm.current=val;
+      this.searchPlanDesignBill();
+    },
+    handleSizeChange(val){
+      console.log("size",val)
+      this.searchForm.size=val;
+      this.searchPlanDesignBill();
     },
     add(){
 
@@ -303,7 +305,7 @@ export default {
       var day = String(currentDate.getDate()).padStart(2, '0');
       var formattedDate = year + '-' + month + '-' + day;
       this.form.planBillName = formattedDate + "设计规划"
-      
+
       let _this=this;
       axios.get('http://localhost:8080/getPlanBillNo.do')
           .then(function (response) {
@@ -337,16 +339,16 @@ export default {
       }).then(function (response) {
         console.log(response)
         console.log("response.data.message",response.data.message)
-            if (response.data.code == 200){
-              _this.dialogFormVisible=false;
-              _this.$message({
-                message: response.data.message,
-                type: 'success'
-              });
-            } else {
-              _this.$message.error(response.data.message);
-            }
-          })
+        if (response.data.code == 200){
+          _this.dialogFormVisible=false;
+          _this.$message({
+            message: response.data.message,
+            type: 'success'
+          });
+        } else {
+          _this.$message.error(response.data.message);
+        }
+      })
           .catch(function (response) {
             _this.$message({
               message:"服务器异常"
@@ -374,7 +376,15 @@ export default {
         "channel_excel_file_name": this.form.channel_excel_file_name,
         "channel_excel_file_url": this.form.channel_excel_file_url,
       }).then(function (response) {
-        console.log(response)
+        if (response.data.code == 200){
+          _this.dialogFormVisible=false;
+          _this.$message({
+            message: response.data.message,
+            type: 'success'
+          });
+        } else {
+          _this.$message.error(response.data.message);
+        }
       })
           .catch(function (response) {
             _this.$message({
@@ -417,6 +427,10 @@ export default {
     exceedTips(){
       this.$message.error("只能上传一个文件");
     }
+  },
+  mounted(){
+    console.log("vue组件实例",this);
+    this.searchPlanDesignBill();
   },
 
 }

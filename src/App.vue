@@ -7,7 +7,6 @@
 
 <script>
 import PlanDesign from './components/PlanDesign.vue'
-
 export default {
   name: 'App',
   components: {
