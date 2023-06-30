@@ -75,33 +75,33 @@
         border
         style="width: 100%">
       <el-table-column
-          prop="plan_bill_no"
+          prop="planBillNo"
           label="规划工单号"
           width="220">
       </el-table-column>
       <el-table-column
-          prop="plan_design_name"
+          prop="planDesignName"
           label="规划设计名称"
           width="220">
       </el-table-column>
       <el-table-column
-          prop="design_company"
+          prop="designCompany"
           label="设计单位"
           width="230">
       </el-table-column>
       <el-table-column
-          prop="spec_id"
+          prop="specId"
           label="业务类型"
           width="120"
           :formatter="formatterDesignType">
       </el-table-column>
       <el-table-column
-          prop="project_director"
+          prop="projectDirector"
           label="项目总负责人"
           width="120">
       </el-table-column>
       <el-table-column
-          prop="spec_leader"
+          prop="specLeader"
           label="专业负责人"
           width="120">
       </el-table-column>
@@ -116,7 +116,7 @@
           width="120">
       </el-table-column>
       <el-table-column
-          prop="create_time"
+          prop="createTime"
           label="设计新建时间"
           width="170">
       </el-table-column>
@@ -148,19 +148,19 @@
           <el-input v-model="form.planBillNo" autocomplete="off" disabled :style="{width:'450px'}"></el-input>
         </el-form-item>
         <el-form-item label="规划设计名称" :label-width="formLabelWidth" :required="true">
-          <el-input v-model="form.planBillName" autocomplete="off" :style="{width:'450px'}"></el-input>
+          <el-input v-model="form.planDesignName" autocomplete="off" :style="{width:'450px'}"></el-input>
         </el-form-item>
         <el-form-item label="设计单位" :label-width="formLabelWidth">
-          <el-input v-model="form.design_company" autocomplete="off":style="{width:'450px'}"></el-input>
+          <el-input v-model="form.designCompany" autocomplete="off":style="{width:'450px'}"></el-input>
         </el-form-item>
         <el-form-item label="规划类型" :label-width="formLabelWidth">
-          <el-input v-model="form.spec_id" autocomplete="off":style="{width:'450px'}"></el-input>
+          <el-input v-model="form.specId" autocomplete="off":style="{width:'450px'}"></el-input>
         </el-form-item>
         <el-form-item label="项目负责人" :label-width="formLabelWidth">
-          <el-input v-model="form.project_director" autocomplete="off":style="{width:'450px'}"></el-input>
+          <el-input v-model="form.projectDirector" autocomplete="off":style="{width:'450px'}"></el-input>
         </el-form-item>
         <el-form-item label="专业负责人" :label-width="formLabelWidth">
-          <el-input v-model="form.spec_leader" autocomplete="off":style="{width:'450px'}"></el-input>
+          <el-input v-model="form.specLeader" autocomplete="off":style="{width:'450px'}"></el-input>
         </el-form-item>
         <el-form-item label="设计人" :label-width="formLabelWidth">
           <el-input v-model="form.designer" autocomplete="off":style="{width:'450px'}"></el-input>
@@ -211,19 +211,19 @@ export default {
       routeCableList: [],
       form: {
         planBillNo:'',
-        planBillName: '23-6-11-001设计规划',
-        design_company: '桂林电信',
-        spec_id: '1',
-        project_director: '张三',
-        spec_leader: '李四',
+        planDesignName: '23-6-11-001设计规划',
+        designCompany: '桂林电信',
+        specId: '1',
+        projectDirector: '张三',
+        specLeader: '李四',
         designer: '王五',
         reviewer: '李华',
-        system_cad_file_name: '',
-        system_cad_file_url: '',
-        system_excel_file_name: '',
-        system_excel_file_url: '',
-        channel_excel_file_name: '',
-        channel_excel_file_url: '',
+        systemCadFileName: '',
+        systemCadFileUrl: '',
+        systemExcelFileName: '',
+        systemExcelFileUrl: '',
+        channelExcelFileName: '',
+        channelExcelFileUrl: '',
         source: '1',
       },
       searchForm: {
@@ -258,16 +258,19 @@ export default {
           });
     },
     formatterDesignType(rows,column){
-      console.log("业务类型：",rows.spec_id);
-      if(rows.spec_id==1){
+      console.log("业务类型：",rows.specId);
+      if(rows.specId==1){
         return"OTW业务"
-      }else if(rows.spec_id==2){
+      }else if(rows.specId==2){
         return"网元业务"
       }
     },
     searchPlanDesignBill() {
       let _this=this;
       console.log(this.searchForm.createTime)
+      console.log(this.searchForm.size)
+      console.log(this.searchForm.current)
+
       axios.post('http://localhost:8080/searchBill.do', this.searchForm)
           .then(res => {
             console.log("res是服务器返回的结果", res);
@@ -319,24 +322,8 @@ export default {
     save(){
       console.log("PlanDesign",this);
       let _this=this;
-      axios.post('http://localhost:8080/createBill.do',{
-        "plan_bill_no":this.form.planBillNo,
-        "plan_design_name":this.form.planBillName,
-        "design_company":this.form.design_company,
-        "project_director":this.form.project_director,
-        "designer":this.form.designer,
-        "reviewer":this.form.reviewer,
-        "spec_leader":this.form.spec_leader,
-        "spec_id":this.form.spec_id,
-        "source": this.form.source,
-        "system_cad_file_name": this.form.system_cad_file_name,
-        "system_cad_file_url": this.form.system_cad_file_url,
-        "system_excel_file_name": this.form.system_excel_file_name,
-        "system_excel_file_url": this.form.system_excel_file_url,
-        "channel_excel_file_name": this.form.channel_excel_file_name,
-        "channel_excel_file_url": this.form.channel_excel_file_url,
-
-      }).then(function (response) {
+      axios.post('http://localhost:8080/createBill.do',this.form
+      ).then(function (response) {
         console.log(response)
         console.log("response.data.message",response.data.message)
         if (response.data.code == 200){
@@ -359,23 +346,8 @@ export default {
     saveAndAnalyse(){
       console.log("PlanDesign",this);
       let _this=this;
-      axios.post('http://localhost:8080/createBillAndAnalyse.do',{
-        "plan_bill_no":this.form.planBillNo,
-        "plan_design_name":this.form.planBillName,
-        "design_company":this.form.design_company,
-        "project_director":this.form.project_director,
-        "designer":this.form.designer,
-        "reviewer":this.form.reviewer,
-        "spec_leader":this.form.spec_leader,
-        "spec_id":this.form.spec_id,
-        "source": this.form.source,
-        "system_cad_file_name": this.form.system_cad_file_name,
-        "system_cad_file_url": this.form.system_cad_file_url,
-        "system_excel_file_name": this.form.system_excel_file_name,
-        "system_excel_file_url": this.form.system_excel_file_url,
-        "channel_excel_file_name": this.form.channel_excel_file_name,
-        "channel_excel_file_url": this.form.channel_excel_file_url,
-      }).then(function (response) {
+      axios.post('http://localhost:8080/createBillAndAnalyse.do',this.form
+      ).then(function (response) {
         if (response.data.code == 200){
           _this.dialogFormVisible=false;
           _this.$message({
@@ -404,22 +376,22 @@ export default {
         // 处理上传成功的逻辑，根据按钮索引执行不同的操作
         if (index === 0) {
           // 按钮1的成功处理逻辑
-          this.form.system_cad_file_name = file.name;
-          console.log("文件1名称：" + this.form.system_cad_file_name)
-          this.form.system_cad_file_url = response.data[0];
-          console.log("文件1url：" + this.form.system_cad_file_url)
+          this.form.systemCadFileName = file.name;
+          console.log("文件1名称：" + this.form.systemCadFileName)
+          this.form.systemCadFileUrl = response.data[0];
+          console.log("文件1url：" + this.form.systemCadFileUrl)
         } else if (index === 1) {
           // 按钮2的成功处理逻辑
-          this.form.system_excel_file_name = file.name;
-          console.log("文件2名称：" + this.form.system_excel_file_name)
-          this.form.system_excel_file_url = response.data[0];
-          console.log("文件2url：" + this.form.system_excel_file_url)
+          this.form.systemExcelFileName = file.name;
+          console.log("文件2名称：" + this.form.systemExcelFileName)
+          this.form.systemExcelFileUrl = response.data[0];
+          console.log("文件2url：" + this.form.systemExcelFileUrl)
         } else if (index === 2) {
           // 按钮3的成功处理逻辑
-          this.form.channel_excel_file_name = file.name;
-          console.log("文件3名称：" + this.form.channel_excel_file_name)
-          this.form.channel_excel_file_url = response.data[0];
-          console.log("文件3url：" + this.form.channel_excel_file_url)
+          this.form.channelExcelFileName = file.name;
+          console.log("文件3名称：" + this.form.channelExcelFileName)
+          this.form.channelExcelFileUrl = response.data[0];
+          console.log("文件3url：" + this.form.channelExcelFileUrl)
         }
       }
 
