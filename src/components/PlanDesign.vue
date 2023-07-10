@@ -175,7 +175,7 @@
           <el-upload
               class="upload-item"
               :key="index"
-              action="http://localhost:8080/upload.do"
+              action="http://localhost:8080/upload"
               :limit="1"
               :on-exceed="exceedTips"
               :on-remove="handleRemove"
@@ -243,7 +243,7 @@ export default {
   methods:{
     selectRouteCable(){
       let _this=this;
-      axios.get('http://localhost:8080/selectRouteCableList.do')
+      axios.get('http://localhost:8080/selectRouteCableList')
           .then(function (response) {
             // 处理成功情况
             console.log(response);
@@ -271,7 +271,7 @@ export default {
       console.log(this.searchForm.size)
       console.log(this.searchForm.current)
 
-      axios.post('http://localhost:8080/searchBill.do', this.searchForm)
+      axios.post('http://localhost:8080/searchBill', this.searchForm)
           .then(res => {
             console.log("res是服务器返回的结果", res);
             _this.planDesignInfoList=res.data.data.records;
@@ -310,7 +310,7 @@ export default {
       this.form.planBillName = formattedDate + "设计规划"
 
       let _this=this;
-      axios.get('http://localhost:8080/getPlanBillNo.do')
+      axios.get('http://localhost:8080/getPlanBillNo')
           .then(function (response) {
             _this.form.planBillNo = response.data.data;
             _this.dialogFormVisible = true;
@@ -322,7 +322,7 @@ export default {
     save(){
       console.log("PlanDesign",this);
       let _this=this;
-      axios.post('http://localhost:8080/createBill.do',this.form
+      axios.post('http://localhost:8080/createBill',this.form
       ).then(function (response) {
         console.log(response)
         console.log("response.data.message",response.data.message)
@@ -346,7 +346,7 @@ export default {
     saveAndAnalyse(){
       console.log("PlanDesign",this);
       let _this=this;
-      axios.post('http://localhost:8080/createBillAndAnalyse.do',this.form
+      axios.post('http://localhost:8080/createBillAndAnalyse',this.form
       ).then(function (response) {
         if (response.data.code == 200){
           _this.dialogFormVisible=false;
